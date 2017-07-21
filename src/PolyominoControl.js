@@ -1,5 +1,6 @@
 import Polyomino from './Polyomino.js';
 import Snap from 'imports-loader?this=>window,fix=>module.exports=0!snapsvg';
+import Please from 'pleasejs';
 
 const _intTransform = x => parseInt(x, 10);
 
@@ -10,8 +11,6 @@ class PolyominoControl extends HTMLElement {
     }
 
     init() {
-        this.style.display = 'inline-block';
-
         let shadowRoot = this.attachShadow({mode: 'open'});
         let svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svgEl.style.display = 'inherit';
@@ -37,10 +36,6 @@ class PolyominoControl extends HTMLElement {
     get mode()          { return this.getAttribute('mode') }
     set mode(arg)       { this.setAttribute('mode', arg) }
 
-    attributeChangedCallback(name, old, current) {
-        console.log(name, old, current);
-    }
-
     connectedCallback() {
         this.init();
         this.setPolyomino(null);
@@ -61,7 +56,28 @@ class PolyominoControl extends HTMLElement {
 
         this.strokeWidth = Math.round(this.realHeight * 0.015);
         if (this.strokeWidth < 2) this.strokeWidth = 2;
-        if (this.strokeWidth > 6) this.strokeWidth = 6;
+        if (this.strokeWidth > 5) this.strokeWidth = 5;
+    }
+
+    _updateRect(r, state) {
+        if (this.mode == 'create-poly') {
+            r.attr({
+                fill: state ? 'dodgerblue' : 'white',
+                opacity: 1,
+            });
+        }
+        if (this.mode == 'create-region') {
+            r.attr({
+                fill: state ? 'white' : 'darkgray',
+                opacity: state ? 1 : 0.2,
+            });
+        }
+        if (this.mode == 'display') {
+            r.attr({
+                fill: state ? 'dodgerblue' : 'white',
+                opacity: 1,
+            });
+        }
     }
 
     _makeRect(x, y, initialState) {
@@ -69,19 +85,30 @@ class PolyominoControl extends HTMLElement {
         r.attr({
             stroke: 'black',
             strokeWidth: this.strokeWidth,
-            fill: initialState ? 'dodgerblue' : 'white',
         });
-        if (this.mode != 'display') {
-            r.click(() => {
+
+        this._updateRect(r, initialState);
+
+        if (this.mode == 'create-poly' || this.mode == 'create-region') {
+            r.mousedown(() => {
                 this.state[x][y] = !this.state[x][y];
-                r.attr({
-                    fill: this.state[x][y] ? 'dodgerblue' : 'white',
-                });
+                this._updateRect(r, this.state[x][y]);
+            });
+            r.mouseover((event) => {
+                if (event.which == 1) {
+                    this.state[x][y] = !this.state[x][y];
+                    this._updateRect(r, this.state[x][y]);
+                }
             });
         }
     }
 
-    setPolyomino(poly=null, fit=false) {
+    redraw() {
+        let cutoff = this._cutoffPolyomino(this.getPolyomino(), this.size);
+        this.setPolyomino(cutoff);
+    }
+
+    setPolyomino(poly=null, fit=false, preserveCurrentState=false) {
 
         this.paper.clear();
 
@@ -92,13 +119,13 @@ class PolyominoControl extends HTMLElement {
         this._calcGeometry();
 
         // Init a size X size grid of booleans
-        this.state = [];
+        let newState = [];
         for (let x = 0; x < this.size; x ++) {
             let row = [];
             for (let y = 0; y < this.size; y ++) {
                 row.push(false);
             }
-            this.state.push(row);
+            newState.push(row);
         }
 
         // Fill in with the Polyomino if given
@@ -106,9 +133,11 @@ class PolyominoControl extends HTMLElement {
             let nonneg = poly.getMinimalNonNegative();
             for (let c of nonneg.coords) {
                 let [x, y] = c;
-                this.state[x][y] = true;
+                newState[x][y] = true;
             }
         }
+
+        this.state = preserveCurrentState ? this.state : newState;
 
         // Draw
         for (let x = 0; x < this.size; x ++) {
@@ -119,15 +148,77 @@ class PolyominoControl extends HTMLElement {
         }
     }
 
+    // only works in display-multiple mode
+    setMultiplePolyominosWithBackground(polys, background) {
+
+        this.paper.clear();
+
+        let rects = [];
+        for (var x = 0; x < this.size; x ++) {
+            let row = [];
+            for (var y = 0; y < this.size; y ++) {
+                row.push(null);
+            }
+            rects.push(row);
+        }
+
+        for (var x = 0; x < this.size; x ++) {
+            for (var y = 0; y < this.size; y ++) {
+                let r = this.paper.rect(this.originX + x * this.distX, this.originY - y * this.distY, this.distX, this.distY);
+                r.attr({
+                    stroke: 'black',
+                    strokeWidth: this.strokeWidth,
+                    fill: 'darkgray',
+                    opacity: 0.2,
+                });
+                rects[x][y] = r;
+            }
+        }
+
+        for (var c of background.coords) {
+            let [x, y] = c;
+            rects[x][y].attr({
+                fill: 'white',
+                opacity: 1
+            });
+        }
+
+        for (var poly of polys) {
+            var color = Please.make_color();
+            for (var c of poly.coords) {
+                let [x, y] = c;
+                rects[x][y].attr({
+                    fill: color,
+                    opacity: 1
+                });
+            }
+        }
+
+    }
+
     getPolyomino() {
         let coords = [];
-        for (let x = 0; x < this.size; x ++) {
-            for (let y = 0; y < this.size; y ++) {
+        let limit = Math.min(this.size, this.state.length);
+        for (let x = 0; x < limit; x ++) {
+            for (let y = 0; y < limit; y ++) {
                 if (this.state[x][y]) coords.push([x, y]);
             }
         }
-        let p = new Polyomino(coords);
-        return p.getMinimalNonNegative();
+        if (coords.length > 0) {
+            let p = new Polyomino(coords);
+            return p.getMinimalNonNegative();
+        } else {
+            return null;
+        }
+    }
+
+    _cutoffPolyomino(p, size) {
+        if (p != null) {
+            let newCoords = p.coords.filter(([x, y]) => x < size && y < size);
+            return (newCoords.length > 0) ? new Polyomino(newCoords) : null;
+        } else {
+            return null;
+        }
     }
 
 }

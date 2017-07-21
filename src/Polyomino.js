@@ -16,10 +16,14 @@ export default class Polyomino {
         this.coords = coords;
     }
 
+    clone() {
+        return new Polyomino(this.coords);
+    }
+
     // Rotates n*90 degrees counter-clockwise
     rotate(n) {
         let angle = n % 4;
-        return new Polyomino(this.coords.map(_trans[angle]));
+        return new Polyomino(this.coords.map(_rotations[angle]));
     }
 
     reflect() {
@@ -57,4 +61,26 @@ export default class Polyomino {
         return Math.max(...ys) - Math.min(...ys) + 1;
     }
 
+    getLargestX() {
+        return Math.max(...this.coords.map(_getx));
+    }
+
+    getLargestY() {
+        return Math.max(...this.coords.map(_gety));
+    }
+
+    containsCoordinate(c) {
+        return this.coords.some(([x, y]) => x == c[0] && y == c[1]);
+    }
+
 }
+
+export const tetrominos = {
+    'I': new Polyomino([[0, 0], [0, 1], [0, 2], [0, 3]]),
+    'O': new Polyomino([[0, 0], [0, 1], [1, 1], [1, 0]]),
+    'T': new Polyomino([[0, 1], [1, 1], [1, 0], [2, 0]]),
+    'J': new Polyomino([[0, 0], [1, 0], [1, 1], [1, 2]]),
+    'L': new Polyomino([[0, 2], [0, 1], [0, 0], [1, 0]]),
+    'S': new Polyomino([[0, 0], [1, 0], [1, 1], [2, 1]]),
+    'Z': new Polyomino([[0, 1], [1, 1], [1, 0], [2, 0]]),
+};

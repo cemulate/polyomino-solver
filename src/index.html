@@ -1,17 +1,17 @@
 <head>
-  <title>Title</title>
+  <title>Polyomino Solver</title>
 </head>
 
 <body>
   <div class="top-bar">
     <div class="top-bar-left">
       <ul class="dropdown menu" data-dropdown-menu>
-        <li class="menu-text">Webpack!</li>
+        <li class="menu-text">Polyomino Solver</li>
       </ul>
     </div>
     <div class="top-bar-right">
       <ul class="menu">
-        <li><a href="https://github.com/name/repo">View on Github</a></li>
+        <li><a href="https://github.com/cemulate/polyomino-solver">View on Github</a></li>
       </ul>
     </div>
   </div>
@@ -21,28 +21,57 @@
     <div class="cell small-6">
 
       <div class="callout primary">
-        <p>Create custom polyominos below and add as many of them as you like to the fitting problem</p>
+        <p>Draw (color in) custom polyominos below or add standard tetrominos</p>
       </div>
 
-      <div class="grid-x">
-        <div class="cell auto">
-          <polyomino-control id="poly-create" style="width: 480px; height: 480px"></polyomino-control>
+      <div class="grid-x grid-padding-x">
+        <div class="cell shrink">
+          <polyomino-control id="poly-create" style="width: 420px; height: 420px; margin-bottom: 15px; display: inline-block"></polyomino-control>
         </div>
-        <div class="cell auto"></div>
-      </div>
-
-      <div class="grid-x grid-padding-y">
-        <div class="cell small-12"><a id="add-button" class="button expanded">Add</a></div>
+        <div class="cell auto">
+          <div class="callout">
+            <p>Click to add standard tetrominos: </p>
+            <hr>
+            <div id="standard-container"></div>
+          </div>
+          <a id="add-button" class="button expanded">Add custom</a>
+        </div>
       </div>
 
       <hr>
 
-      <div id="poly-container"></div>
+      <div class="callout">
+        <p>Polyominos to be fit show up here (click to remove)</p>
+        <div id="poly-container"></div>
+      </div>
 
     </div>
 
-    <div class="cell-small-6">
+    <div class="cell small-6">
 
+      <div class="callout secondary">
+        <p>Draw (color in) the region to fit the polyominos into</p>
+      </div>
+
+      <div class="grid-x grid-padding-x">
+        <div class="cell shrink">
+          <polyomino-control id="region-create" style="width: 600px; height: 600px; margin-bottom: 15px; display: inline-block" size=10 mode="create-region"></polyomino-control>
+        </div>
+        <div class="cell auto">
+          <a id="size-up-button" class="button expanded">Size up</a>
+          <a id="size-down-button" class="button expanded">Size down</a>
+          <a id="solve-button" class="button expanded success">Solve</a>
+          <div id="loading" style="display: none" class="grid-x">
+            <div class="cell auto">
+              <img id="loading-image" style="display: block; margin: auto">
+            </div>
+          </div>
+          <a id="clear-button" style="display: none" class="button expanded">Clear</a>
+          <div id="no-solution" style="display: none" class="callout alert">
+            <p><strong>NO SOLUTION</strong></p>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
