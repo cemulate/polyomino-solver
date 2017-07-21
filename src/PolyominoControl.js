@@ -183,8 +183,14 @@ class PolyominoControl extends HTMLElement {
             });
         }
 
+        var dHue = Math.round(360 / polys.length);
+        var h = Math.floor(Math.random() * 360);
+
         for (var poly of polys) {
-            var color = Please.make_color();
+
+            h = (h + dHue) % 360;
+            var color = Please.make_color({golden: false, hue: h, saturation: 0.8});
+
             for (var c of poly.coords) {
                 let [x, y] = c;
                 rects[x][y].attr({
