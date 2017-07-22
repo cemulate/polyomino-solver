@@ -1,5 +1,5 @@
 import Polyomino from './Polyomino.js';
-import Snap from 'imports-loader?this=>window,fix=>module.exports=0!snapsvg';
+import Snap from 'imports-loader?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg-min.js';
 import Please from 'pleasejs';
 
 const _intTransform = x => parseInt(x, 10);
@@ -90,7 +90,7 @@ class PolyominoControl extends HTMLElement {
         this._updateRect(r, initialState);
 
         if (this.mode == 'create-poly' || this.mode == 'create-region') {
-            r.mousedown(() => {
+            r.mousedown((event) => {
                 this.state[x][y] = !this.state[x][y];
                 this._updateRect(r, this.state[x][y]);
             });
