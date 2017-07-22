@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   context: path.resolve(__dirname, './src'),
@@ -19,7 +20,8 @@ module.exports = {
     rules: [
       {
         test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader']
+        // use: ['style-loader', 'css-loader', 'sass-loader']
+        loader: ExtractTextPlugin.extract('css-loader!sass-loader'),
       },
       {
         test: /\.(png|jpg|gif)$/,
@@ -34,5 +36,8 @@ module.exports = {
       }
     ]
   },
-  plugins: [new BundleAnalyzerPlugin({analyzerMode: 'disabled'})]
+  plugins: [
+    new BundleAnalyzerPlugin({analyzerMode: 'disabled'}),
+    new ExtractTextPlugin('styles.css')
+  ]
 };
