@@ -91,19 +91,24 @@ class PolyominoControl extends HTMLElement {
 
         if (this.mode == 'create-poly' || this.mode == 'create-region') {
             r.touchstart(event => {
+                this._touchFlag = true;
                 this.state[x][y] = !this.state[x][y];
                 this._updateRect(r, this.state[x][y]);
                 event.stopPropagation();
                 event.preventDefault();
             });
             r.mousedown(event => {
+                if (this._touchFlag) return;
                 this.state[x][y] = !this.state[x][y];
                 this._updateRect(r, this.state[x][y]);
+                event.preventDefault();
             });
             r.mouseover(event => {
+                if (this._touchFlag) return;
                 if (event.which == 1) {
                     this.state[x][y] = !this.state[x][y];
                     this._updateRect(r, this.state[x][y]);
+                    event.preventDefault();
                 }
             });
         }
