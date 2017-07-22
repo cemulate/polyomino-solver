@@ -1,5 +1,5 @@
 // CSS
-import 'foundation-sites/dist/css/foundation.css';
+import 'foundation-sites/dist/css/foundation.min.css';
 
 // Images
 import loadingGif from './assets/loading.gif';
@@ -13,6 +13,15 @@ import Polyomino, {tetrominos} from './Polyomino.js';
 import PolyominoProblem from './PolyominoProblem.js';
 import SatSolverWorker from 'worker-loader!./SatSolverWorker.js';
 
+
+// Adjust polyomino geometry if on small screens (looking for a better way... ?)
+if (window.innerWidth < 1025) {
+    for (let control of document.getElementsByTagName('polyomino-control')) {
+        let cw = window.getComputedStyle(control).getPropertyValue('width');
+        control.style.height = cw;
+        control.redraw();
+    }
+}
 
 // Adds a polyomino-control displaying poly to the bottom area; returns the new element
 function addSavedPolyomino(poly) {
@@ -55,6 +64,7 @@ for (let polyName in tetrominos) {
     });
 }
 
+// Size controls
 document.getElementById('size-up-button').addEventListener('click', event => {
     let el = document.getElementById('region-create');
     el.size += 1;
@@ -69,6 +79,7 @@ document.getElementById('size-down-button').addEventListener('click', event => {
     el.redraw();
 });
 
+// Solve button
 document.getElementById('solve-button').addEventListener('click', event => {
 
     document.getElementById('no-solution').style.display = 'none';
@@ -112,6 +123,7 @@ document.getElementById('solve-button').addEventListener('click', event => {
 
 });
 
+// Clear button
 document.getElementById('clear-button').addEventListener('click', event => {
 
     let disp = document.getElementById('region-create');

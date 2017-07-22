@@ -1,5 +1,27 @@
 <head>
   <title>Polyomino Solver</title>
+
+  <style>
+    /* The custom elements need a little help being responsibly responsive */
+    polyomino-control {
+      display: block;
+    }
+    @media (max-width: 1025px) {
+      #poly-create, #region-create {
+        width: 100%; /* Height will be set in javascript for this case */
+      }
+    }
+    @media (min-width: 1026px) {
+      #poly-create {
+        width: 20vw;
+        height: 20vw;
+      }
+      #region-create {
+        width: 30vw;
+        height: 30vw;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -18,15 +40,15 @@
 
   <div class="grid-x grid-padding-x grid-padding-y">
 
-    <div class="cell small-6">
+    <div class="cell large-6 small-12">
 
       <div class="callout primary">
         <p>Draw (color in) custom polyominos below or add standard tetrominos</p>
       </div>
 
       <div class="grid-x grid-padding-x">
-        <div class="cell shrink">
-          <polyomino-control id="poly-create" style="width: 420px; height: 420px; margin-bottom: 15px; display: inline-block"></polyomino-control>
+        <div class="cell small-12 large-shrink">
+          <polyomino-control id="poly-create" class="show-large-only"></polyomino-control>
         </div>
         <div class="cell auto">
           <div class="callout">
@@ -47,15 +69,15 @@
 
     </div>
 
-    <div class="cell small-6">
+    <div class="cell large-6 small-12">
 
       <div class="callout secondary">
         <p>Draw (color in) the region to fit the polyominos into</p>
       </div>
 
       <div class="grid-x grid-padding-x">
-        <div class="cell shrink">
-          <polyomino-control id="region-create" style="width: 600px; height: 600px; margin-bottom: 15px; display: inline-block" size=10 mode="create-region"></polyomino-control>
+        <div class="cell large-shrink small-12">
+          <polyomino-control id="region-create" size=10 mode="create-region"></polyomino-control>
         </div>
         <div class="cell auto">
           <a id="size-up-button" class="button expanded">Size up</a>
