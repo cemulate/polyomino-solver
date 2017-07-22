@@ -1,5 +1,5 @@
 // CSS
-import 'foundation-sites/dist/css/foundation.min.css';
+import './theme.scss';
 
 // Images
 import loadingGif from './assets/loading.gif';

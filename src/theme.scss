@@ -1,0 +1,54 @@
+// Settings
+
+@import '~foundation-sites/scss/foundation.scss';
+
+@include foundation-global-styles;
+@include foundation-xy-grid-classes;
+@include foundation-typography;
+@include foundation-button;
+@include foundation-menu;
+@include foundation-top-bar;
+@include foundation-callout;
+
+polyomino-control {
+  display: block;
+  margin-bottom: 15px;
+}
+
+#poly-create, #region-create {
+  @include breakpoint(medium down) {
+    width: 75vw;
+    height: 75vw;
+  }
+}
+
+#poly-create {
+  @include breakpoint(large up) {
+    width: 20vw;
+    height: 20vw;
+  }
+}
+
+#region-create {
+  @include breakpoint(large up) {
+    width: 30vw;
+    height: 30vw;
+  }
+}
+
+// @media (max-width: 1025px) {
+//   #poly-create, #region-create {
+//     width: 75vw;
+//     height: 75vw;
+//   }
+// }
+// @media (min-width: 1026px) {
+//   #poly-create {
+//     width: 20vw;
+//     height: 20vw;
+//   }
+//   #region-create {
+//     width: 30vw;
+//     height: 30vw;
+//   }
+// }

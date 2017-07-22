@@ -12,13 +12,14 @@ module.exports = {
     path: path.resolve(__dirname, './dist')
   },
   devServer: {
-    contentBase: path.resolve(__dirname, './src')
+    contentBase: path.resolve(__dirname, './src'),
+    disableHostCheck: true,
   },
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
         test: /\.(png|jpg|gif)$/,
