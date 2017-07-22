@@ -13,16 +13,6 @@ import Polyomino, {tetrominos} from './Polyomino.js';
 import PolyominoProblem from './PolyominoProblem.js';
 import SatSolverWorker from 'worker-loader!./SatSolverWorker.js';
 
-
-// Adjust polyomino geometry if on small screens (looking for a better way... ?)
-if (window.innerWidth < 1025) {
-    for (let control of document.getElementsByTagName('polyomino-control')) {
-        let cw = window.getComputedStyle(control).getPropertyValue('width');
-        control.style.height = cw;
-        control.redraw();
-    }
-}
-
 // Adds a polyomino-control displaying poly to the bottom area; returns the new element
 function addSavedPolyomino(poly) {
     let el = document.createElement('polyomino-control');
