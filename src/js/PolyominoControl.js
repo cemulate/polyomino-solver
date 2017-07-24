@@ -105,7 +105,7 @@ export default class PolyominoControl extends HTMLElement {
             });
             r.mouseover(event => {
                 if (this._touchFlag) return;
-                if (event.which == 1) {
+                if (event.buttons == 1) {
                     this.state[x][y] = !this.state[x][y];
                     this._updateRect(r, this.state[x][y]);
                     event.preventDefault();
