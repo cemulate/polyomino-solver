@@ -4,7 +4,7 @@ import Please from 'pleasejs';
 
 const _intTransform = x => parseInt(x, 10);
 
-class PolyominoControl extends HTMLElement {
+export default class PolyominoControl extends HTMLElement {
 
     constructor() {
         super();
@@ -239,5 +239,3 @@ class PolyominoControl extends HTMLElement {
     }
 
 }
-
-window.customElements.define('polyomino-control', PolyominoControl);
