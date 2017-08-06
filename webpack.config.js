@@ -1,7 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   context: path.resolve(__dirname, './src'),
@@ -37,6 +38,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new UglifyJSPlugin(),
     new BundleAnalyzerPlugin({analyzerMode: 'disabled'}),
     new ExtractTextPlugin('styles.css')
   ]
