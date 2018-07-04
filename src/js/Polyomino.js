@@ -78,7 +78,7 @@ export default class Polyomino {
 export const tetrominos = {
     'I': new Polyomino([[0, 0], [0, 1], [0, 2], [0, 3]]),
     'O': new Polyomino([[0, 0], [0, 1], [1, 1], [1, 0]]),
-    'T': new Polyomino([[0, 1], [1, 1], [1, 0], [2, 0]]),
+    'T': new Polyomino([[0, 1], [1, 1], [1, 0], [2, 1]]),
     'J': new Polyomino([[0, 0], [1, 0], [1, 1], [1, 2]]),
     'L': new Polyomino([[0, 2], [0, 1], [0, 0], [1, 0]]),
     'S': new Polyomino([[0, 0], [1, 0], [1, 1], [2, 1]]),
