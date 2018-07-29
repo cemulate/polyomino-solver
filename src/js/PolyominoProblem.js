@@ -156,33 +156,19 @@ export default class PolyominoProblem {
 
         // Oh boy.
 
-        // Now, a utility function for the client to get the polyomino configuration corresponding to a variable:
+        // This function provides an interpretation of a solution to the CNF problem for this Polyomino Problem.
+        // That is, it provides a recipe to convert the solution of this CNF problem to a solution of this particular Polyomino problem.
 
-        this._savedPieceData = pieceData;
+        let interpreter = solution => solution.map((v, i) => {
+            if (i == 0 || !v) return null;
+            let data = pieceData.find(data => data.getCorrespondingPolyConfiguration(i) != null);
+            return data.getCorrespondingPolyConfiguration(i);
+        }).filter(x => x != null);
 
-        return cnf.getCNFProblem();
+        // The caller is responsible for solving the cnf problem, and running `interpreter` on the solution
 
-    }
+        return { cnfProblem: cnf.getCNFProblem(), interpreter };
 
-    _retrievePolyConfigurationForVariable(v) {
-        if (this._savedPieceData == null) {
-            throw 'PolyominoProblem has not been converted to SAT yet';
-        }
-
-        for (let data of this._savedPieceData) {
-            let maybe = data.getCorrespondingPolyConfiguration(v);
-            if (maybe != null) return maybe;
-        }
-    }
-
-    interpretSATSolution(solution) {
-        let polys = [];
-        for (var i = 1; i < solution.length; i ++) {
-            if (solution[i]) {
-                polys.push(this._retrievePolyConfigurationForVariable(i));
-            }
-        }
-        return polys;
     }
 
 }

@@ -10,6 +10,7 @@ import PolyominoControl from './js/PolyominoControl.js';
 window.customElements.define('polyomino-control', PolyominoControl);
 
 // Main functionality
-import run from './js/Application.js';
+import Application from './js/Application.js';
 
-run();
+const app = new Application();
+app.init();
