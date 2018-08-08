@@ -25,41 +25,27 @@ export default class PolyominoProblem {
         }
     }
 
-    _generateAllPossibleForPiece(piece) {
-        let orientations = [];
+    * _generateAllPossibleForPiece(piece) {
 
-        orientations.push(piece.rotate(0));
-
-        if (this.allowRotation) {
-            for (var i = 1; i < 4; i ++) {
-                orientations.push(piece.rotate(i).getMinimalNonNegative());
-            }
-        }
-
+        let orientations = [ piece.rotate(0).getMinimalNonNegative() ];
+        if (this.allowRotation) orientations.push(...[1,2,3].map(i => piece.rotate(i).getMinimalNonNegative()));
         if (this.allowReflection) {
             let reflected = piece.reflect();
             orientations.push(reflected);
-            if (this.allowRotation) {
-                for (var i = 1; i < 4; i ++) {
-                    orientations.push(reflected.rotate(i).getMinimalNonNegative());
-                }
-            }
+            if (this.allowRotation) orientations.push(...[1,2,3].map(i => reflected.rotate(i).getMinimalNonNegative()));
         }
-
-        var total = [];
 
         for (let config of orientations) {
 
             for (var dx = 0; dx < this.width; dx ++) {
                 for (var dy = 0; dy < this.height; dy ++) {
                     let translated = config.translate(dx, dy);
-                    if (this._fits(translated)) total.push(translated);
+                    if (this._fits(translated)) yield translated;
                 }
             }
 
         }
 
-        return total;
     }
 
     convertToSAT() {
@@ -68,24 +54,22 @@ export default class PolyominoProblem {
 
         // First, generate all the possible ways each piece can be:
 
-        let pieceConfigurations = this.pieces.map(x => this._generateAllPossibleForPiece(x));
-
         let pieceData = [];
         let curVariableOffset = 1;
-        for (var pset of pieceConfigurations) {
-            let closure_pset = pset;
-            let closure_offset = curVariableOffset;
+        for (let piece of this.pieces) {
+            let pset = Array.from(this._generateAllPossibleForPiece(piece));
+            let offset = curVariableOffset;
 
             let data = {
-                varsOffset: curVariableOffset,
+                varsOffset: offset,
                 varsLength: pset.length,
-                varsEnd: curVariableOffset + pset.length,
+                varsEnd: offset + pset.length,
                 getCorrespondingPolyConfiguration: varIndex => {
-                    // This closes over the variables pset and frozenOffset, to provide a way to get the particular Polyomino associated with a variable
-                    if ((varIndex - closure_offset) >= 0 && (varIndex - closure_offset) < closure_pset.length) return closure_pset[varIndex - closure_offset];
+                    // This closes over the variables pset and offset, to provide a way to get the particular Polyomino associated with a variable
+                    if ((varIndex - offset) >= 0 && (varIndex - offset) < pset.length) return pset[varIndex - offset];
                     return null;
                 }
-            }
+            };
 
             curVariableOffset += pset.length;
             pieceData.push(data);
@@ -95,10 +79,10 @@ export default class PolyominoProblem {
 
         // Encode the fact that one piece can't exist in multiples orientations/places
 
-        for (var data of pieceData) {
+        for (let data of pieceData) {
 
-            for (var v = data.varsOffset; v < data.varsEnd; v ++) {
-                for (var w = v+1; w < data.varsEnd; w ++) {
+            for (let v = data.varsOffset; v < data.varsEnd; v ++) {
+                for (let w = v+1; w < data.varsEnd; w ++) {
 
                     // For all possible (v, w) of variables representing the configuration of one piece,
                     // at least one of v or w must be false (otherwise, the piece would exist in two ways/places)
@@ -114,29 +98,31 @@ export default class PolyominoProblem {
 
         // However, each piece must exist in at least one configuration
 
-        for (var data of pieceData) {
+        for (let data of pieceData) {
 
             // One clause that OR's all of the configurations
 
             cnf.beginClause();
-            for (var v = data.varsOffset; v < data.varsEnd; v ++) {
+            for (let v = data.varsOffset; v < data.varsEnd; v ++) {
                 cnf.add(v);
             }
             cnf.endClause();
 
         }
 
-        for (var i = 0; i < pieceData.length; i ++) {
-            for (var j = i+1; j < pieceData.length; j ++) {
+        for (let i = 0; i < pieceData.length; i ++) {
+            for (let j = i+1; j < pieceData.length; j ++) {
 
                 // Do it that way to be non-redunant with the combinations
 
-                var [data, otherData] = [pieceData[i], pieceData[j]];
+                let data = pieceData[i];
+                let otherData = pieceData[j];
 
-                for (var v = data.varsOffset; v < data.varsEnd; v ++) {
-                    for (var w = otherData.varsOffset; w < otherData.varsEnd; w ++) {
+                for (let v = data.varsOffset; v < data.varsEnd; v ++) {
+                    for (let w = otherData.varsOffset; w < otherData.varsEnd; w ++) {
 
-                        let [configOfPiece, configOfOtherPiece] = [data.getCorrespondingPolyConfiguration(v), otherData.getCorrespondingPolyConfiguration(w)];
+                        let configOfPiece = data.getCorrespondingPolyConfiguration(v);
+                        let configOfOtherPiece = otherData.getCorrespondingPolyConfiguration(w);
 
                         if (!configOfPiece.isDisjointFrom(configOfOtherPiece)) {
 
