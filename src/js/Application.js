@@ -6,6 +6,18 @@ export default class Application {
 
     init() {
 
+        let solveButton = document.getElementById('solve-button');
+        solveButton.disabled = true;
+        solveButton.innerHTML = 'Loading ...';
+        solveButton.classList.add('disabled');
+
+        document.querySelectorAll('.method-select').forEach(node => {
+            node.addEventListener('click', event => {
+                document.querySelectorAll('.method-select').forEach(node => node.checked = false);
+                event.target.checked = true;
+            });
+        });
+
         this.worker = new SatSolverWorker();
         this.worker.onmessage = event => this.handleWorkerMessage(event);
 
@@ -60,12 +72,19 @@ export default class Application {
 
             let region = document.getElementById('region-create').getPolyomino();
 
-            let problem = new PolyominoProblem(polys, region);
-            let { cnfProblem, interpreter } = problem.convertToSAT();
-            this.currentlySolving = { polyProblem: problem, cnfProblem, interpreter };
+            let solveMethod = document.querySelector('.method-select:checked').id.split('-')[1];
+
+            let polyProblem = new PolyominoProblem(polys, region);
+            let { convertedProblem, interpreter } =
+                solveMethod == 'sat' ? polyProblem.convertToSAT() :
+                solveMethod == 'z3' ? polyProblem.convertToZ3() :
+                polyProblem.convertToZ3();
+
+            this.currentlySolving = { polyProblem, convertedProblem, interpreter };
 
             // Kick it off with the sat problem
-            this.worker.postMessage({cnfProblem});
+            // this.worker.postMessage({ type: 'sat', problem: convertedProblem });
+            this.worker.postMessage({ type: solveMethod, problem: convertedProblem });
 
             document.getElementById('loading').style.display = 'block';
 
@@ -101,6 +120,14 @@ export default class Application {
     }
 
     handleWorkerMessage(event) {
+        if (event.data == 'ready') {
+            let solveButton = document.getElementById('solve-button');
+            solveButton.disabled = false;
+            solveButton.innerHTML = 'Solve';
+            solveButton.classList.remove('disabled');
+            return;
+        }
+
         let solution = event.data.solution;
 
         if (solution) {

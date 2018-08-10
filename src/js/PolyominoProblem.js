@@ -150,8 +150,88 @@ export default class PolyominoProblem {
 
         // The caller is responsible for solving the cnf problem, and running `interpreter` on the solution
 
-        return { cnfProblem: cnf.getCNFProblem(), interpreter };
+        return { convertedProblem: cnf.getCNFProblem(), interpreter };
 
+    }
+
+    convertToZ3() {
+        let program = [];
+        let exp = (...parts) => `( ${parts.join(' ')} )`;
+        let assert = e => exp('assert', e);
+        let varName = (i, j) => `p_${i}_${j}`;
+
+        let pieceData = this.pieces.map(piece => Array.from(this._generateAllPossibleConfigurations(piece)));
+
+        pieceData.forEach((configs, pieceIndex) => {
+            configs.forEach((configuration, configIndex) => {
+                program.push(exp('declare-const', varName(pieceIndex, configIndex), 'Bool'));
+            });
+        });
+
+        // Any given piece cannot exist in multiple configurations, but must exist in at least one configuration
+        pieceData.forEach((configs, pieceIndex) => {
+            // No more than one configuration
+            program.push(assert(exp(
+                exp('_', 'at-most', '1'),
+                ...configs.map((configuration, configIndex) => varName(pieceIndex, configIndex)),
+            )));
+
+            // At least one configuration
+            program.push(assert(exp(
+                'or',
+                ...configs.map((configuration, configIndex) => varName(pieceIndex, configIndex)),
+            )));
+        });
+
+        // Pieces cannot overlap each other
+        pieceData.forEach((configs, pieceIndex) => {
+            configs.forEach((configuration, configIndex) => {
+
+                // Gather variables corresponding to configurations of OTHER pieces
+                // that THIS configuration of THIS piece would overlap with
+                let disallowedVariables = [];
+                pieceData.forEach((otherConfigs, otherPieceIndex) => {
+                    otherConfigs.forEach((otherConfiguration, otherConfigIndex) => {
+                        if (pieceIndex == otherPieceIndex) return;
+
+                        if (!configuration.isDisjointFrom(otherConfiguration)) {
+                            disallowedVariables.push(varName(otherPieceIndex, otherConfigIndex));
+                        }
+                    });
+                });
+
+                if (disallowedVariables.length > 0) {
+                    // This configuration implies not any of the disallowed configurations
+                    program.push(assert(exp(
+                        '=>',
+                        varName(pieceIndex, configIndex),
+                        exp('not', exp('or', ...disallowedVariables)),
+                    )));
+                }
+            });
+        });
+
+        program.push(exp('check-sat'));
+        program.push(exp('get-model'));
+        program.push(exp('exit'));
+
+        let interpreter = solution => {
+            let polys = [];
+
+            for (let assignment of solution.slice(1)) {
+                let variable = assignment[1];
+                let value = (assignment[4] == 'true');
+
+                if (value) {
+                    let [_, pieceIndex, configIndex] = variable.split('_');
+                    polys.push(pieceData[pieceIndex][configIndex]);
+                }
+            }
+
+            return polys;
+        }
+
+        return { convertedProblem: { inputFile: program.join('\n') }, interpreter };
     }
 
 }
