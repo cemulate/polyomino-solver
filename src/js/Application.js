@@ -100,6 +100,11 @@ export default class Application {
             document.getElementById('clear-button').style.display = 'none';
             document.getElementById('no-solution').style.display = 'none';
 
+            document.querySelectorAll('.size-button').forEach(node => {
+                node.disabled = false;
+                node.classList.remove('disabled');
+            });
+
         });
     }
 
@@ -136,6 +141,10 @@ export default class Application {
             let disp = document.getElementById('region-create');
             disp.mode = 'display-multiple';
             disp.setMultiplePolyominosWithBackground(solutionPolys, this.currentlySolving.polyProblem.region);
+            document.querySelectorAll('.size-button').forEach(node => {
+                node.disabled = true;
+                node.classList.add('disabled');
+            });
         } else {
             document.getElementById('no-solution').style.display = 'block';
         }
