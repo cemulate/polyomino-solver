@@ -8,20 +8,32 @@ It's a rewrite of a project I did a long time ago, focusing on using the latest 
 
 # How it works
 
-It's known that for arbitrary grids and arbitrary sets of [polyominos](https://en.wikipedia.org/wiki/Polyomino), the problem of deciding whether or not the polyominos can fit together on the grid is an [NP-Complete](https://en.wikipedia.org/wiki/NP-completeness) problem. Being NP-Complete, we can convert a tiling problem into an instance of a [Boolean Satisfiability Problem](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem), for which far more efficient solvers exist.
+### Algorithm X
 
-Tiling problems can be converted to SAT problems in the following manner:
+Knuth's "Algorithm X" (implemented with "Dancing Links") is the best algorithm to handle this problem, by reducing it to an [Exact Cover Problem](https://en.wikipedia.org/wiki/Exact_cover).
+The details are explained by Knuth himself in [his paper](https://arxiv.org/abs/cs/0011047).
+I use [dlxlib](https://github.com/taylorjg/dlxlibjs/blob/master/src/dlx.js) as an implementation of Dancing Links, courtesy of [taylorgj](https://github.com/taylorjg).
 
-- For every possible orientation and translation of each polyomino, a boolean variable is created signifying that "this piece can go on the board in this way"
-- Add clauses that express "one piece can't exist in two different ways"
-- Add clauses that express "each piece must go on the board in some way"
-- Add clauses that express "two pieces cannot exist in a way that overlaps"
 
-After this, we apply [boolean-sat](https://www.npmjs.com/package/boolean-sat) to solve the problem.
+### Converstion to SAT
+
+The other two solving methods are much less efficient, and were the solutions I first discovered.
+
+It's known that for arbitrary grids and arbitrary sets of [polyominos](https://en.wikipedia.org/wiki/Polyomino), the problem of deciding whether or not the polyominos can fit together on the grid is an [NP-Complete](https://en.wikipedia.org/wiki/NP-completeness) problem. Being NP-Complete, we can convert a tiling problem into an instance of a [Boolean Satisfiability Problem](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem), for which efficient solvers exist.
+
+Tiling problems can be converted to SAT by introducing a boolean variable for each configuration that each piece could possibly exist in, and then adding clauses that state that a piece must exist in exactly one configuration, and no configurations can overlap.
+
+#### Javascript SAT Solver
+
+The problem is converted to a [CNF](https://en.wikipedia.org/wiki/Conjunctive_normal_form) file (a common input format for SAT solvers).
+After that, [boolean-sat](https://www.npmjs.com/package/boolean-sat) is applied to solve the problem.
 This is Javascript SAT solver based on my [forked repo](https://github.com/cemulate/SAT.js) of the original code written by Gregory Duck of at University of Singapore.
+This is probably the least efficient method.
+Since the SAT problem must be specified in CNF, even the input file can get very large very quickly.
 
-Note that solving this problem is extremely inefficient. The size of the SAT problem created grows with the square of the number of pieces, and linearly with board area. Not only that, but solving the SAT problem itself runs in exponential time. (And we're doing all of this in JS, because why not).
+#### Z3 Webassembly
 
-### My browser literally runs for days and/or crashes trying to find the solution
-
-Yes, I'm not surprised. This woefully inefficient javascript algorithm will start to choke (that is, take too long or run out of memory) on a puzzle as small as an 8x7 grid with 14 pieces. What should you do if you want to solve these for real? You should head over to my [forked puzzle-tools repo](https://github.com/cemulate/puzzle-tools), the original script on which this web app is based. The README there has details, but its a script you can download and run with puzzle files, using a real SAT solver called [glucose](http://www.labri.fr/perso/lsimon/glucose/).
+This was born out of an attempt to make the preceding method faster.
+Here, we convert the problem to [SMT](http://smtlib.cs.uiowa.edu/)
+ format, and use the [Webassembly build](https://github.com/cpitclaudel/z3.wasm) of Microsoft Research's [Z3 Theorem Prover](https://github.com/Z3Prover/z3).
+ Generally speaking, this is a tool that can check the satisfiability of first-order logic statements over arbitrary theories, but we only utilize it for the predicate logic subset.
