@@ -25,25 +25,22 @@ export default class PolyominoProblem {
         }
     }
 
-    * _generateAllPossibleForPiece(piece) {
+    * _generateAllPossibleConfigurations(piece) {
 
-        let orientations = [ piece.rotate(0).getMinimalNonNegative() ];
-        if (this.allowRotation) orientations.push(...[1,2,3].map(i => piece.rotate(i).getMinimalNonNegative()));
-        if (this.allowReflection) {
-            let reflected = piece.reflect();
-            orientations.push(reflected);
-            if (this.allowRotation) orientations.push(...[1,2,3].map(i => reflected.rotate(i).getMinimalNonNegative()));
-        }
+        for (let rotation of [ 0, ...(this.allowRotation ? [1, 2, 3] : []) ]) {
+            for (let reflected of [ false, ...(this.allowReflection ? [ true ] : []) ]) {
+                for (let dx = 0; dx < this.width; dx ++) {
+                    for (let dy = 0; dy < this.height; dy ++) {
 
-        for (let config of orientations) {
+                        let config = piece.rotate(rotation);
+                        if (reflected) config = config.reflect();
+                        config = config.getMinimalNonNegative();
+                        config = config.translate(dx, dy);
 
-            for (var dx = 0; dx < this.width; dx ++) {
-                for (var dy = 0; dy < this.height; dy ++) {
-                    let translated = config.translate(dx, dy);
-                    if (this._fits(translated)) yield translated;
+                        if (this._fits(config)) yield config;
+                    }
                 }
             }
-
         }
 
     }
@@ -57,7 +54,7 @@ export default class PolyominoProblem {
         let pieceData = [];
         let curVariableOffset = 1;
         for (let piece of this.pieces) {
-            let pset = Array.from(this._generateAllPossibleForPiece(piece));
+            let pset = Array.from(this._generateAllPossibleConfigurations(piece));
             let offset = curVariableOffset;
 
             let data = {
