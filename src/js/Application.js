@@ -6,16 +6,19 @@ export default class Application {
 
     init() {
 
-        let solveButton = document.getElementById('solve-button');
-        solveButton.disabled = true;
-        solveButton.innerHTML = 'Loading ...';
-        solveButton.classList.add('disabled');
-
         document.querySelectorAll('.method-select').forEach(node => {
             node.addEventListener('click', event => {
                 document.querySelectorAll('.method-select').forEach(node => node.checked = false);
                 event.target.checked = true;
             });
+        });
+
+        document.querySelector('#method-z3').addEventListener('click', event => {
+            this.worker.postMessage('loadZ3');
+            let solveButton = document.getElementById('solve-button');
+            solveButton.disabled = true;
+            solveButton.innerHTML = 'Loading Z3 ...';
+            solveButton.classList.add('disabled');
         });
 
         this.worker = new SatSolverWorker();
@@ -78,6 +81,7 @@ export default class Application {
             let { convertedProblem, interpreter } =
                 solveMethod == 'sat' ? polyProblem.convertToSAT() :
                 solveMethod == 'z3' ? polyProblem.convertToZ3() :
+                solveMethod == 'dlx' ? polyProblem.convertToDlx() :
                 polyProblem.convertToZ3();
 
             this.currentlySolving = { polyProblem, convertedProblem, interpreter };
@@ -125,7 +129,7 @@ export default class Application {
     }
 
     handleWorkerMessage(event) {
-        if (event.data == 'ready') {
+        if (event.data == 'z3Loaded') {
             let solveButton = document.getElementById('solve-button');
             solveButton.disabled = false;
             solveButton.innerHTML = 'Solve';

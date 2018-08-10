@@ -68,13 +68,10 @@
           <a id="size-up-button" class="size-button button expanded">Size up</a>
           <a id="size-down-button" class="size-button button expanded">Size down</a>
           <hr>
-          <p>Solving method</p>
-          <p>
-            <input class="method-select" id="method-sat" type="checkbox"> Javascript SAT
-          </p>
-          <p>
-            <input class="method-select" id="method-z3" type="checkbox" checked> Z3 WASM
-          </p>
+          <p></p>
+          <p> <input class="method-select" id="method-dlx" type="checkbox" checked> Algorithm X / Dancing Links (best) </p>
+          <p> <input class="method-select" id="method-sat" type="checkbox"> SAT (JavaScript SAT Solver) </p>
+          <p> <input class="method-select" id="method-z3" type="checkbox"> SAT (Z3 Webassembly build) </p>
           <hr>
           <a id="solve-button" class="button expanded success">Solve</a>
           <div id="loading" style="display: none; margin-top: 15px; margin-bottom: 15px" class="grid-x">

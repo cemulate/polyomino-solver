@@ -234,4 +234,41 @@ export default class PolyominoProblem {
         return { convertedProblem: { inputFile: program.join('\n') }, interpreter };
     }
 
+    convertToDlx() {
+        let matrix = [];
+
+        let rowSize = this.pieces.length + this.region.coords.length;
+
+        this.pieces.forEach((piece, pieceIndex) => {
+            let configs = Array.from(this._generateAllPossibleConfigurations(piece));
+            for (let config of configs) {
+                let row = new Array(rowSize).fill(0);
+
+                row[pieceIndex] = 1;
+
+                for (let c of config.coords) {
+                    let index = this.region.coords.findIndex(x => c[0] == x[0] && c[1] == x[1]);
+                    row[this.pieces.length + index] = 1;
+                }
+
+                matrix.push(row);
+            }
+        });
+
+        let findOneIndices = arr => {
+            let next = arr.indexOf(1);
+            if (next < 0) return [];
+            return [ next, ...findOneIndices(arr.slice(next + 1)).map(i => next + 1 + i) ];
+        }
+
+        let interpreter = solution => {
+            return solution.map(row => {
+                let ones = findOneIndices(row.slice(this.pieces.length));
+                return new Polyomino(ones.map(i => this.region.coords[i]));
+            });
+        }
+
+        return { convertedProblem: { matrix }, interpreter };
+    }
+
 }

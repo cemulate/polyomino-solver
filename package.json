@@ -24,6 +24,7 @@
   "dependencies": {
     "boolean-sat": "^1.0.0",
     "copy-webpack-plugin": "^4.5.2",
+    "dlxlib": "^1.0.3",
     "foundation-sites": "^6.4.1",
     "pleasejs": "^0.4.2",
     "s-expression": "^3.0.3",
