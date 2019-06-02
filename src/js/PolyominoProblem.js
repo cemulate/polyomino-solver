@@ -1,4 +1,4 @@
-import Polyomino from './Polyomino.js';
+import { Polyomino } from 'web-component-polyomino';
 
 import CNFBuilder from './CNFBuilder.js';
 

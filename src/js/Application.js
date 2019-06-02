@@ -1,4 +1,4 @@
-import Polyomino, {tetrominos} from './Polyomino.js';
+import { Polyomino, tetrominos } from 'web-component-polyomino';
 import PolyominoProblem from './PolyominoProblem.js';
 import SatSolverWorker from 'worker-loader!./SatSolverWorker.js';
 

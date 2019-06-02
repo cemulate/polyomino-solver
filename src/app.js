@@ -6,7 +6,7 @@ import loadingGif from './assets/loading.gif';
 document.getElementById('loading-image').src = loadingGif;
 
 // Custom elements
-import PolyominoControl from './js/PolyominoControl.js';
+import { PolyominoControl } from 'web-component-polyomino';
 window.customElements.define('polyomino-control', PolyominoControl);
 
 // Main functionality
