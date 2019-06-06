@@ -1,0 +1,95 @@
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Polyomino Solver</title>
+  <!-- I guess I'll support browsers besides latest-Chrome -->
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.3/webcomponents-sd-ce.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <ul class="dropdown menu" data-dropdown-menu>
+        <li class="menu-text">Polyomino Solver</li>
+      </ul>
+    </div>
+    <div class="top-bar-right">
+      <ul class="menu">
+        <li><a href="https://github.com/cemulate/polyomino-solver">View on Github</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid-x grid-padding-x grid-padding-y">
+
+    <div class="cell large-6 small-12">
+
+      <div class="callout primary">
+        <p>Draw (color in) custom polyominos below or add standard tetrominos</p>
+      </div>
+
+      <div class="grid-x grid-padding-x">
+        <div class="cell small-12 large-shrink">
+          <polyomino-control id="poly-create" class="show-large-only" size="7"></polyomino-control>
+        </div>
+        <div class="cell auto">
+          <div class="callout">
+            <p>Click to add standard tetrominos: </p>
+            <hr>
+            <div id="standard-container"></div>
+          </div>
+          <a id="add-button" class="button expanded">Add custom</a>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="callout">
+        <p>Polyominos to be fit show up here (click to remove)</p>
+        <div id="poly-container"></div>
+      </div>
+
+    </div>
+
+    <div class="cell large-6 small-12">
+
+      <div class="callout secondary">
+        <p>Draw (color in) the region to fit the polyominos into</p>
+      </div>
+
+      <div class="grid-x grid-padding-x">
+        <div class="cell large-shrink small-12">
+          <polyomino-control id="region-create" size=10 mode="create-region"></polyomino-control>
+        </div>
+        <div class="cell auto">
+          <a id="size-up-button" class="size-button button expanded">Size up</a>
+          <a id="size-down-button" class="size-button button expanded">Size down</a>
+          <hr>
+          <p></p>
+          <p> <input class="method-select" id="method-dlx" type="checkbox" checked> Algorithm X / Dancing Links (best) </p>
+          <p> <input class="method-select" id="method-sat" type="checkbox"> SAT (JavaScript SAT Solver) </p>
+          <p> <input class="method-select" id="method-z3" type="checkbox"> SAT (Z3 Webassembly build) </p>
+          <hr>
+          <a id="solve-button" class="button expanded success">Solve</a>
+          <div id="loading" style="display: none; margin-top: 15px; margin-bottom: 15px" class="grid-x">
+            <div class="cell auto">
+              <img id="loading-image" style="display: block; margin: auto">
+            </div>
+          </div>
+          <a id="clear-button" style="display: none" class="button expanded">Clear</a>
+          <div id="no-solution" style="display: none" class="callout alert">
+            <p><strong>NO SOLUTION</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script src="app.bundle.js"></script>
+</body>
+
+</html>
