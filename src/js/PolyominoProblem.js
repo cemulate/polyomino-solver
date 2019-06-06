@@ -1,12 +1,12 @@
-import { Polyomino } from 'web-component-polyomino';
+import { Polyomino } from './Polyomino.js';
 
 import CNFBuilder from './CNFBuilder.js';
 
 export default class PolyominoProblem {
 
     constructor(pieces, region, allowRotation=true, allowReflection=false) {
-        this.pieces = pieces.map(x => x.getMinimalNonNegative());
-        this.region = region.getMinimalNonNegative();
+        this.pieces = pieces.map(x => x.normalize());
+        this.region = region.normalize();
         this.allowRotation = allowRotation;
         this.allowReflection = allowReflection;
 
@@ -34,7 +34,7 @@ export default class PolyominoProblem {
 
                         let config = piece.rotate(rotation);
                         if (reflected) config = config.reflect();
-                        config = config.getMinimalNonNegative();
+                        config = config.normalize();
                         config = config.translate(dx, dy);
 
                         if (this._fits(config)) yield config;

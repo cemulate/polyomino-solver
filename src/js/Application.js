@@ -1,4 +1,4 @@
-import { Polyomino, tetrominos } from 'web-component-polyomino';
+import { Polyomino, tetrominos } from './Polyomino.js';
 import PolyominoProblem from './PolyominoProblem.js';
 import SatSolverWorker from 'worker-loader!./SatSolverWorker.js';
 
@@ -27,8 +27,8 @@ export default class Application {
         document.getElementById('add-button').addEventListener('click', event => {
 
             // Save the Polyomino from the custom creation
-            let poly = document.getElementById('poly-create').getPolyomino();
-            if (poly != null) this.addSavedPolyomino(poly);
+            let coords = document.getElementById('poly-create').value;
+            if (coords.length > 0) this.addSavedPolyomino(coords);
 
         });
 
@@ -40,11 +40,10 @@ export default class Application {
             el.mode = 'display';
             document.getElementById('standard-container').appendChild(el);
 
-            el.setPolyomino(tetrominos[polyName], false);
+            el.value = tetrominos[polyName].coords;
 
             el.addEventListener('click', event => {
-                let poly = el.getPolyomino();
-                this.addSavedPolyomino(poly);
+                if (el.value.length > 0) this.addSavedPolyomino(el.value);
             });
         }
 
@@ -70,10 +69,13 @@ export default class Application {
 
             let polys = [];
             for (let polyControl of document.getElementById('poly-container').children) {
-                polys.push(polyControl.getPolyomino());
+                polys.push(new Polyomino(polyControl.value));
             }
 
-            let region = document.getElementById('region-create').getPolyomino();
+            let regionDisplay = document.getElementById('region-create');
+            let regionCoords = regionDisplay.mode == 'display-multiple' ? regionDisplay.value[0] : regionDisplay.value;
+
+            let region = new Polyomino(regionCoords);
 
             let solveMethod = document.querySelector('.method-select:checked').id.split('-')[1];
 
@@ -99,7 +101,7 @@ export default class Application {
 
             let disp = document.getElementById('region-create');
             disp.mode = 'create-region';
-            disp.setPolyomino(null);
+            disp.value = [];
 
             document.getElementById('clear-button').style.display = 'none';
             document.getElementById('no-solution').style.display = 'none';
@@ -113,13 +115,15 @@ export default class Application {
     }
 
     // Adds a polyomino-control displaying poly to the bottom area; returns the new element
-    addSavedPolyomino(poly) {
+    addSavedPolyomino(coords) {
         let el = document.createElement('polyomino-control');
-        el.style.cssText = 'width: 50px; height: 50px; display: inline-block';
+        el.style.cssText = 'width: 50px; height: 50px; display: inline-block; margin-right: 10px; vertical-align: top';
         el.mode = 'display';
         document.getElementById('poly-container').appendChild(el);
 
-        el.setPolyomino(poly, true);
+        let poly = new Polyomino(coords).normalize();
+        el.size = poly.getSize();
+        el.value = [ ...poly.coords ];
 
         el.addEventListener('click', event => {
             el.remove();
@@ -144,7 +148,8 @@ export default class Application {
 
             let disp = document.getElementById('region-create');
             disp.mode = 'display-multiple';
-            disp.setMultiplePolyominosWithBackground(solutionPolys, this.currentlySolving.polyProblem.region);
+            // disp.setMultiplePolyominosWithBackground(solutionPolys, this.currentlySolving.polyProblem.region);
+            disp.value = [ this.currentlySolving.polyProblem.region.coords, ...solutionPolys.map(x => x.coords) ];
             document.querySelectorAll('.size-button').forEach(node => {
                 node.disabled = true;
                 node.classList.add('disabled');
