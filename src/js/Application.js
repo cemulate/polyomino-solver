@@ -5,6 +5,47 @@ import SatSolverWorker from 'worker-loader!./SatSolverWorker.js';
 export default class Application {
 
     init() {
+        {
+          this.state = JSON.parse(
+            localStorage.getItem("polyomino-solver-state")
+          ) || {
+            savedPolyomino: [],
+            size: 10,
+            regionCoords: null,
+          };
+          for (let coords of this.state.savedPolyomino) {
+            this.addSavedPolyomino(coords);
+          }
+          let el = document.getElementById("region-create");
+          el.size = this.state.size || 10;
+          if (this.state.regionCoords) {
+            el.value =
+              el.mode == "display-multiple"
+                ? [this.state.regionCoords]
+                : this.state.regionCoords;
+          }
+          setInterval(() => {
+            let regionDisplay = document.getElementById("region-create");
+            let regionCoords =
+              regionDisplay.mode == "display-multiple"
+                ? regionDisplay.value[0]
+                : regionDisplay.value;
+            let savedPolyomino = [];
+            for (let polyControl of document.getElementById("poly-container")
+              .children) {
+              savedPolyomino.push(polyControl.value);
+            }
+            const state = {
+              savedPolyomino,
+              size: document.getElementById("region-create").size,
+              regionCoords,
+            };
+            localStorage.setItem(
+              "polyomino-solver-state",
+              JSON.stringify(state)
+            );
+          }, 1500);
+        }
 
         document.querySelectorAll('.method-select').forEach(node => {
             node.addEventListener('click', event => {
