@@ -4,26 +4,22 @@
   "description": "Solve arbitrary polyomino fitting problems",
   "author": "Chase Meadors",
   "scripts": {
-    "serve": "webpack-dev-server",
-    "build": "webpack"
+    "serve": "webpack serve --mode=development --hot",
+    "build": "webpack --mode production"
   },
   "devDependencies": {
-    "css-loader": "^0.28.4",
-    "uglifyjs-webpack-plugin": "^1.0.0-beta.1",
-    "extract-text-webpack-plugin": "^3.0.0",
-    "imports-loader": "^0.7.1",
-    "node-sass": "^4.5.3",
-    "sass-loader": "^6.0.6",
-    "style-loader": "^0.18.2",
-    "url-loader": "^0.5.9",
-    "webpack": "^3.3.0",
-    "webpack-bundle-analyzer": "^2.8.3",
-    "webpack-dev-server": "^2.5.1",
-    "worker-loader": "^0.8.1"
+    "copy-webpack-plugin": "^9.0.0",
+    "css-loader": "^5.2.6",
+    "mini-css-extract-plugin": "^1.6.0",
+    "sass": "^1.34.1",
+    "sass-loader": "^12.0.0",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2",
+    "worker-loader": "^3.0.8"
   },
   "dependencies": {
     "boolean-sat": "^1.0.0",
-    "copy-webpack-plugin": "^4.5.2",
     "dlxlib": "^1.0.3",
     "foundation-sites": "^6.4.1",
     "s-expression": "^3.0.3",

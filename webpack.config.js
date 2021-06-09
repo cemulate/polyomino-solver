@@ -1,9 +1,6 @@
 const path = require('path');
-const webpack = require('webpack');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   context: path.resolve(__dirname, './src'),
@@ -22,30 +19,32 @@ module.exports = {
     rules: [
       {
         test: /\.scss$/,
-        // use: ['style-loader', 'css-loader', 'sass-loader']
-        loader: ExtractTextPlugin.extract('css-loader!sass-loader'),
-      },
-      {
-        test: /\.(png|jpg|gif)$/,
         use: [
           {
-            loader: 'url-loader',
-            options: {
-              limit: 8192
-            }
-          }
-        ]
-      }
+            loader: MiniCssExtractPlugin.loader,
+          },
+          'css-loader',
+          'sass-loader',
+        ],
+      },
+      {
+        test: /\.(png|jpg|gif)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.worker\.js$/,
+        loader: 'worker-loader',
+      },
     ]
   },
   plugins: [
-    new UglifyJSPlugin(),
-    new BundleAnalyzerPlugin({analyzerMode: 'disabled'}),
-    new ExtractTextPlugin('styles.css'),
-    new CopyWebpackPlugin([
-      { from: './wasm/z3w.wasm', to: './z3w.wasm' },
-      { from: './wasm/z3w.js', to: './z3w.js' },
-      { from: './index.html', to: './index.html' },
-    ])
-  ]
+    new MiniCssExtractPlugin({ filename: 'styles.css' }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: './wasm/z3w.wasm', to: './z3w.wasm' },
+        { from: './wasm/z3w.js', to: './z3w.js' },
+        { from: './index.html', to: './index.html' },
+      ],
+    }),
+  ],
 };
