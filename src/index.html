@@ -79,7 +79,7 @@
             <input class="method-select" id="method-sat" type="checkbox"> SAT (JavaScript)
             <p><small>
               Reduces to <a target="_blank" href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">SAT</a>.
-              Finds <strong>partial (inexact)</strong> solutions.
+              Will finds <strong>partial (inexact)</strong> solutions, and is <strong>nondeterministic</strong>.
               Uses a <a target="_blank" href="https://www.npmjs.com/package/boolean-sat">JavaScript SAT solver</a>, and usually gives the best performance for small or easy problems.
             </small></p>
           </div>
@@ -87,7 +87,7 @@
             <input class="method-select" id="method-z3" type="checkbox"> SAT (Z3)
             <p><small>
               Reduces to <a target="_blank" href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">SAT</a>.
-              Finds <strong>partial (inexact)</strong> solutions.
+              Will find <strong>partial (inexact)</strong> solutions, and is <strong>deterministic</strong>.
               Solves SAT via a Webassembly build of the <a href="https://github.com/Z3Prover/z3">Z3 Theorem Prover</a>, and gives <em>better</em> performance for larger problems.
             </small></p>
           </div>
