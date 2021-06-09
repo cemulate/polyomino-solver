@@ -69,9 +69,29 @@
           <a id="size-down-button" class="size-button button expanded">Size down</a>
           <hr>
           <p></p>
-          <p> <input class="method-select" id="method-dlx" type="checkbox" checked> Algorithm X / Dancing Links (best) </p>
-          <p> <input class="method-select" id="method-sat" type="checkbox"> SAT (JavaScript SAT Solver) </p>
-          <p> <input class="method-select" id="method-z3" type="checkbox"> SAT (Z3 Webassembly build) </p>
+          <div>
+            <input class="method-select" id="method-dlx" type="checkbox" checked> Algorithm X (Dancing Links)
+            <p><small>
+              Reduces to an <a target="_blank" href="https://en.wikipedia.org/wiki/Exact_cover">exact cover problem</a>.
+              Only finds <strong>exact</strong> solutions, but usually gives the best performance when an exact solution exists.
+            </small></p>
+          </div>
+          <div>
+            <input class="method-select" id="method-sat" type="checkbox"> SAT (JavaScript)
+            <p><small>
+              Reduces to <a target="_blank" href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">SAT</a>.
+              Finds <strong>partial (inexact)</strong> solutions.
+              Uses a <a target="_blank" href="https://www.npmjs.com/package/boolean-sat">JavaScript SAT solver</a>, and usually gives the best performance for small or easy problems.
+            </small></p>
+          </div>
+          <div>
+            <input class="method-select" id="method-z3" type="checkbox"> SAT (Z3)
+            <p><small>
+              Reduces to <a target="_blank" href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">SAT</a>.
+              Finds <strong>partial (inexact)</strong> solutions.
+              Solves SAT via a Webassembly build of the <a href="https://github.com/Z3Prover/z3">Z3 Theorem Prover</a>, and gives <em>better</em> performance for larger problems.
+            </small></p>
+          </div>
           <hr>
           <a id="solve-button" class="button expanded success">Solve</a>
           <div id="loading" style="display: none; margin-top: 15px; margin-bottom: 15px" class="grid-x">
