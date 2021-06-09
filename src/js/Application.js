@@ -142,7 +142,11 @@ export default class Application {
 
             let disp = document.getElementById('region-create');
             disp.mode = 'create-region';
-            disp.value = [];
+            try {
+                disp.value = JSON.parse(localStorage.getItem('polyomino-solver-state')).regionCoords;
+            } catch {
+                disp.value = [];
+            }
 
             document.getElementById('clear-button').style.display = 'none';
             document.getElementById('no-solution').style.display = 'none';
