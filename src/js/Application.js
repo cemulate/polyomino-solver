@@ -76,7 +76,7 @@ export default class Application {
         // Populate standard tetrominos
         for (let polyName in tetrominos) {
             let el = document.createElement('polyomino-control');
-            el.style.cssText = 'width: 60px; height: 60px; display: inline-block;';
+            el.classList.add('tetromino');
             el.size = 4;
             el.mode = 'display';
             document.getElementById('standard-container').appendChild(el);

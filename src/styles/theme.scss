@@ -10,9 +10,14 @@
 @include foundation-top-bar;
 @include foundation-callout;
 
-polyomino-control {
+#poly-create {
   display: block;
   margin-bottom: 15px;
+  --cell-color: rgb(165,165,165);
+}
+
+#region-create {
+  background: lightgray;
 }
 
 #poly-create, #region-create {
@@ -34,6 +39,17 @@ polyomino-control {
     width: 30vw;
     height: 30vw;
   }
+}
+
+.tetromino {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  --cell-color: lightgray;
+}
+
+#poly-container polyomino-control {
+  --cell-color: lightgreen;
 }
 
 // @media (max-width: 1025px) {
