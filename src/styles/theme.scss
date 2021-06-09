@@ -45,10 +45,12 @@
   width: 60px;
   height: 60px;
   display: inline-block;
+  margin-bottom: 15px;
   --cell-color: lightgray;
 }
 
 #poly-container polyomino-control {
+  margin-bottom: 15px;
   --cell-color: lightgreen;
 }
 
