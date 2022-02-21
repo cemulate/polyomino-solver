@@ -73,6 +73,8 @@ export default class Application {
 
         });
 
+        document.getElementById('allow-transformation-rotation').checked = true;
+
         // Populate standard tetrominos
         for (let polyName in tetrominos) {
             let el = document.createElement('polyomino-control');
@@ -120,7 +122,10 @@ export default class Application {
 
             let solveMethod = document.querySelector('.method-select:checked').id.split('-')[1];
 
-            let polyProblem = new PolyominoProblem(polys, region);
+            let allowRotation = document.getElementById('allow-transformation-rotation').checked;
+            let allowReflection = document.getElementById('allow-transformation-reflection').checked;
+
+            let polyProblem = new PolyominoProblem(polys, region, allowRotation, allowReflection);
             let { convertedProblem, interpreter } =
                 solveMethod == 'sat' ? polyProblem.convertToSAT() :
                 solveMethod == 'z3' ? polyProblem.convertToZ3() :
