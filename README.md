@@ -6,14 +6,28 @@ Construct a collection of standard and/or completely custom polyominos, and an a
 
 It's a rewrite of a project I did a long time ago, focusing on using the latest and greatest web technologies (un-transpiled ES6, web components / custom elements, Webpack, Foundation 6's flexbox grid, etc.).
 
-# How it works
+## Installation (MacOS only)
+
+```bash
+cd ~/projects # Or whereever you want to install this project.
+git clone https://github.com/oldfartdeveloper/polyomino-solver.git
+cd polyomino-solver
+npm install webpack --save-dev # ignore warnings
+npx webpack build              # ignore warnings
+npx webpack serve
+```
+
+When you browse your [local server/](https://localhost:8080/), you should see:
+
+![initial solver screen](doc/initialscreen.png)
+
+## How it works
 
 ### Algorithm X
 
 Knuth's "Algorithm X" (implemented with "Dancing Links") is the best algorithm to handle this problem, by reducing it to an [Exact Cover Problem](https://en.wikipedia.org/wiki/Exact_cover).
 The details are explained by Knuth himself in [his paper](https://arxiv.org/abs/cs/0011047).
 I use [dlxlib](https://github.com/taylorjg/dlxlibjs/blob/master/src/dlx.js) as an implementation of Dancing Links, courtesy of [taylorgj](https://github.com/taylorjg).
-
 
 ### Converstion to SAT
 
