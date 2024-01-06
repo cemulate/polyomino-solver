@@ -28,12 +28,17 @@ self.onmessage = function(event) {
 
     let { type, problem } = event.data;
 
+    let startTime = performance.now();
+
     if (type == 'sat') {
 
         let { numVars, clauseList } = problem;
         let solution = solveSat(numVars, clauseList);
 
-        self.postMessage({ solution });
+        self.postMessage({ 
+            solution: solution == false ? null : solution,
+            time: performance.now() - startTime
+        });
 
     } else if (type == 'z3') {
 
@@ -50,7 +55,7 @@ self.onmessage = function(event) {
             let model = self.z3SolverOutputLines.slice(1).join(' ');
             let parsed = parseSexp(model);
 
-            self.postMessage({ solution: parsed });
+            self.postMessage({ solution: parsed, time: performance.now() - startTime });
 
             self.z3SolverOutputLines = [];
         }
@@ -62,10 +67,10 @@ self.onmessage = function(event) {
         let solutions = solveExactCover(matrix, null, null, 1);
 
         if (solutions.length == 0) {
-            self.postMessage({ solution: null });
+            self.postMessage({ solution: null, time: performance.now() - startTime });
         } else {
             let rows = solutions[0].map(i => matrix[i]);
-            self.postMessage({ solution: rows });
+            self.postMessage({ solution: rows, time: performance.now() - startTime });
         }
 
     }
