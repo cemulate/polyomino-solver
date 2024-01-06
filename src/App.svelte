@@ -152,8 +152,9 @@
 				<polyomino-control id="poly-create" bind:this={ polyCreateEl } size={ polyCreateSize }></polyomino-control>
 				<div class="grid-x grid-padding-x align-middle">
 					<div class="cell shrink">
-                        <button class="button hollow size-button" on:click={e => polyCreateSize = Math.max(2, polyCreateSize - 1) }>⇲</button>
-						<button class="button hollow size-button" on:click={e => polyCreateSize += 1}>⇱</button>
+                        <button class="button hollow size-button" title="grid size down" on:click={e => polyCreateSize = Math.max(2, polyCreateSize - 1) }>⇲</button>
+						<button class="button hollow size-button" title="grid size up" on:click={e => polyCreateSize += 1}>⇱</button>
+                        <button class="button hollow size-button" title="clear" on:click={e => polyCreateEl.value = [] }>⎚</button>
 					</div>
 					<div class="cell auto">
 						<button class="button expanded" on:click={ addCustomPolyomino }>Add</button>
@@ -216,8 +217,15 @@
             ></polyomino-control>
         {/if}
 
-        <button class="button hollow size-button" on:click={e => regionCreateSize = Math.max(2, regionCreateSize - 1) }>⇲</button>
-        <button class="button hollow size-button" on:click={e => regionCreateSize += 1}>⇱</button>
+        <button class="button hollow size-button" class:disabled={ workComplete } disabled={ workComplete } 
+            title="grid size down" on:click={e => regionCreateSize = Math.max(2, regionCreateSize - 1) }
+        >⇲</button>
+        <button class="button hollow size-button" class:disabled={ workComplete } disabled={ workComplete }
+            title="grid size up" on:click={e => regionCreateSize += 1}
+        >⇱</button>
+        <button class="button hollow size-button" class:disabled={ workComplete } disabled={ workComplete }
+            title="clear" on:click={e => regionCoords = []}
+        >⎚</button>
 	</div>
 	
 	<div class="cell xlarge-3 medium-6 small-12">
