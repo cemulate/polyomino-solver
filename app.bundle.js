@@ -28,7 +28,7 @@
             .cell.active.c2 { background-color: var(--six-coloring-2, royalblue) }
             .cell.active.c3 { background-color: var(--six-coloring-3, indianred) }
             .cell.active.c4 { background-color: var(--six-coloring-4, limegreen) }
-            .cell.active.c5 { background-color: var(--six-coloring-5, darkviolet) }
+            .cell.active.c5 { background-color: var(--six-coloring-5, orange) }
 
             .grid-container.display .cell {
                 outline: none;
