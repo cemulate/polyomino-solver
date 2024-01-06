@@ -4,7 +4,7 @@ Try it [here](https://cemulate.github.io/polyomino-solver).
 
 Construct a collection of standard and/or completely custom polyominos, and an arbitrary region to fit them in, and this web app will find and display a valid tiling that places all of the polyominos in the region (if it exists).
 
-It's a rewrite of a project I did a long time ago, focusing on using the latest and greatest web technologies (un-transpiled ES6, web components / custom elements, Webpack, Foundation 6's flexbox grid, etc.).
+Uses [web-component-polyomino](https://github.com/cemulate/web-component-polyomino) for building, manipulating, and displaying polyominos.
 
 # How it works
 
