@@ -11,12 +11,24 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, './dist')
   },
-  devServer: {
-    contentBase: path.resolve(__dirname, './src'),
-    disableHostCheck: true,
-  },
   module: {
     rules: [
+      {
+        test: /\.svelte$/,
+        use: {
+          loader: 'svelte-loader',
+          options: {
+            emitCss: true,
+          },
+        }
+      },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+        ],
+      },
       {
         test: /\.scss$/,
         use: [
@@ -29,7 +41,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif)$/i,
-        type: 'asset/resource',
+        type: 'asset/inline',
       },
       {
         test: /\.worker\.js$/,
