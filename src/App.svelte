@@ -200,7 +200,7 @@
         {#if (workComplete && foundSolution)}
             <p><strong>Solution</strong></p>
             <polyomino-control
-                id="region-create"
+                id="solution-display"
                 size={ regionCreateSize } 
                 mode="display-multiple"
                 value={ currentProblem.solutionCoords || [] }
@@ -283,16 +283,14 @@
 
 <style>
 #poly-create {
-    display: block;
-    margin-bottom: 15px;
-    --cell-color: lightblue;
+    --cell-color: cyan;
 }
 
-#region-create {
+#region-create, #solution-display {
     background: lightgray;
 }
 
-#poly-create, #region-create {
+#poly-create, #region-create, #solution-display {
     margin-bottom: 10px;
     width: 100%;
     aspect-ratio: 1;
