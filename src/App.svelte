@@ -2,7 +2,6 @@
     import loadingGif from './assets/loading.gif';
 
     import { Polyomino, tetrominos } from './js/Polyomino.js';
-    import PolyominoProblem from './js/PolyominoProblem.js';
     import SatSolverWorker from 'worker-loader!./js/SatSolverWorker.js';
 
     let localState = JSON.parse(localStorage.getItem('polyomino-solver-state')) || {
@@ -40,7 +39,7 @@
     $: polyominos, regionCreateSize, regionCoords, persistStateDebounced();
 
     // Technical state
-    let currentProblem = { polyProblem: null, convertedProblem: null, interpreter: null, time: null, solutionCoords: null };
+    let currentProblem = { problemData: null, time: null, solutionCoords: null };
 
     function resetIfWorkComplete() {
         if (workComplete) currentProblem = {};
@@ -51,7 +50,7 @@
     $: polyominos, resetIfWorkComplete();
 
     // Inferences based on currentProblem
-    $: working = currentProblem.polyProblem != null && currentProblem.time == null;
+    $: working = currentProblem.problemData != null && currentProblem.time == null;
     $: workComplete = currentProblem.time != null;
     $: foundSolution = currentProblem.solutionCoords != null;
 
@@ -76,16 +75,17 @@
         if (event.data == 'z3Loaded') {
             return workerBusy = false;
         } else {
+            let { solution, time } = event.data;
             // Update currentProblem based on worker results
-            currentProblem.time = event.data.time;
+
+            currentProblem.time = time;
 
             if (event.data.solution != null) {
-                let solutionPolys = currentProblem.interpreter(event.data.solution);
                 // Data for polyomino-control in 'display-multiple' mode; display 
                 // problem region first in white in case of an inexact solution.
                 currentProblem.solutionCoords = [
-                    currentProblem.polyProblem.region.coords,
-                    ...solutionPolys.map(x => x.coords)
+                    currentProblem.problemData.region,
+                    ...solution.map(x => x.coords)
                 ];
             }
             return workerBusy = false;
@@ -99,24 +99,18 @@
     }
 
     function solve() {
-        let polyProblem = new PolyominoProblem(
-            polyominos.map(coords => new Polyomino(coords)),
-            new Polyomino(regionCoords),
-            settings.allowRotation,
-            settings.allowReflection,
-        );
+        let problemData = {
+            pieces: polyominos,
+            region: regionCoords,
+            allowRotation: settings.allowRotation,
+            allowReflection: settings.allowReflection,
+        };
 
         let solveMethod = settings.method.split('-')[1];
 
-        let { convertedProblem, interpreter } =
-            solveMethod == 'sat' ? polyProblem.convertToSAT() :
-            solveMethod == 'z3' ? polyProblem.convertToZ3() :
-            solveMethod == 'dlx' ? polyProblem.convertToDlx() :
-            polyProblem.convertToDlx();
+        currentProblem = { problemData };
 
-        currentProblem = { polyProblem, convertedProblem, interpreter };
-
-        worker.postMessage({ type: solveMethod, problem: convertedProblem });
+        worker.postMessage({ type: solveMethod, problem: problemData });
         workerBusy = true;
     }
 </script>

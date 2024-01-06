@@ -3,6 +3,8 @@
 import solveSat from 'boolean-sat';
 import parseSexp from 's-expression';
 import { solve as solveExactCover } from 'dlxlib';
+import PolyominoProblem from './PolyominoProblem';
+import { Polyomino } from './Polyomino';
 
 self.z3Ready = false;
 self.z3SolverOutputLines = [];
@@ -24,19 +26,29 @@ self.onmessage = function(event) {
             },
             print: message => self.z3SolverOutputLines.push(message),
         });
+        return;
     }
 
     let { type, problem } = event.data;
+    let polyProblem = new PolyominoProblem(
+        problem.pieces.map(coords => new Polyomino(coords)),
+        new Polyomino(problem.region),
+        problem.allowRotation,
+        problem.allowReflection
+    );
 
     let startTime = performance.now();
 
     if (type == 'sat') {
 
-        let { numVars, clauseList } = problem;
-        let solution = solveSat(numVars, clauseList);
+        let { convertedProblem, interpreter } = polyProblem.convertToSAT();
+
+        let { numVars, clauseList } = convertedProblem;
+        let satSolution = solveSat(numVars, clauseList);
+        let solution = satSolution == false ? null : interpreter(satSolution);
 
         self.postMessage({ 
-            solution: solution == false ? null : solution,
+            solution,
             time: performance.now() - startTime
         });
 
@@ -44,25 +56,30 @@ self.onmessage = function(event) {
 
         if (!self.z3Ready) throw new Error('Z3 solver is still loading...');
 
-        let { inputFile } = problem;
+        let { convertedProblem, interpreter } = polyProblem.convertToZ3();
+
+        let { inputFile } = convertedProblem;
 
         self.z3Solver.FS.writeFile('input.smt2', inputFile, { encoding: 'utf-8' });
         self.z3Solver.callMain(['-smt2', 'input.smt2']);
 
         if (self.z3SolverOutputLines[0] == 'unsat') {
-            self.postMessage({ solution: null });
+            self.postMessage({ solution: null, time: performance.now() - startTime });
         } else {
             let model = self.z3SolverOutputLines.slice(1).join(' ');
             let parsed = parseSexp(model);
+            let solution = interpreter(parsed);
 
-            self.postMessage({ solution: parsed, time: performance.now() - startTime });
+            self.postMessage({ solution, time: performance.now() - startTime });
 
             self.z3SolverOutputLines = [];
         }
 
     } else if (type == 'dlx') {
 
-        let { matrix } = problem;
+        let { convertedProblem, interpreter } = polyProblem.convertToDlx();
+
+        let { matrix } = convertedProblem;
 
         let solutions = solveExactCover(matrix, null, null, 1);
 
@@ -70,7 +87,8 @@ self.onmessage = function(event) {
             self.postMessage({ solution: null, time: performance.now() - startTime });
         } else {
             let rows = solutions[0].map(i => matrix[i]);
-            self.postMessage({ solution: rows, time: performance.now() - startTime });
+            let solution = interpreter(rows);
+            self.postMessage({ solution, time: performance.now() - startTime });
         }
 
     }
