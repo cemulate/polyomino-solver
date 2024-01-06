@@ -26,18 +26,26 @@ export default class PolyominoProblem {
     }
 
     * _generateAllPossibleConfigurations(piece) {
+        let uniqueConfigs = [];
 
         for (let rotation of [ 0, ...(this.allowRotation ? [1, 2, 3] : []) ]) {
             for (let reflected of [ false, ...(this.allowReflection ? [ true ] : []) ]) {
+                let config = piece.rotate(rotation);
+                if (reflected) config = config.reflect();
+                config = config.normalize();
+
+                // Account for symmetries
+                // Two configs are the same iff their normalizations are equal
+                if (uniqueConfigs.some(c => c.equals(config))) {
+                    continue;
+                } else {
+                    uniqueConfigs.push(config);
+                }
+
                 for (let dx = 0; dx < this.width; dx ++) {
                     for (let dy = 0; dy < this.height; dy ++) {
-
-                        let config = piece.rotate(rotation);
-                        if (reflected) config = config.reflect();
-                        config = config.normalize();
-                        config = config.translate(dx, dy);
-
-                        if (this._fits(config)) yield config;
+                        let place = config.translate(dx, dy);
+                        if (this._fits(place)) yield place;
                     }
                 }
             }
