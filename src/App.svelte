@@ -24,17 +24,31 @@
     let selectedTab = 'polyomino';
     $: largestPolySize = Math.max(2, ...polyominos.map(coords => new Polyomino(coords).getSize()));
 
+
+    let persistTimeout;
+    function persistStateDebounced() {
+        if (persistTimeout != null) clearTimeout(persistTimeout);
+        persistTimeout = setTimeout(() => {
+            localStorage.setItem('polyomino-solver-state', JSON.stringify({
+                savedPolyomino: polyominos,
+                size: regionCreateSize,
+                regionCoords,
+            }));
+        }, 1500);
+    }
+
+    $: polyominos, regionCreateSize, regionCoords, persistStateDebounced();
+
     // Technical state
     let currentProblem = { polyProblem: null, convertedProblem: null, interpreter: null, time: null, solutionCoords: null };
 
     function resetIfWorkComplete() {
         if (workComplete) currentProblem = {};
-        console.log('reset', currentProblem);
     }
 
     // When viewing the solution, any change to the settings should reset the UI.
-    $: settings && resetIfWorkComplete();
-    $: polyominos && resetIfWorkComplete();
+    $: settings, resetIfWorkComplete();
+    $: polyominos, resetIfWorkComplete();
 
     // Inferences based on currentProblem
     $: working = currentProblem.polyProblem != null && currentProblem.time == null;
