@@ -23,6 +23,10 @@
     let selectedTab = 'polyomino';
     $: largestPolySize = Math.max(2, ...polyominos.map(coords => new Polyomino(coords).getSize()));
 
+    const regionCoordsSize = new Polyomino(regionCoords).getSize();
+    regionCreateSize = Math.max(regionCreateSize, regionCoordsSize);
+
+    $: canDecrementRegionSize = regionCoords.every(([ x, y ]) => x < regionCreateSize - 1 && y < regionCreateSize - 1);
 
     let persistTimeout;
     function persistStateDebounced() {
@@ -96,6 +100,11 @@
     }
 
     function solve() {
+        // The solving machinery will normalize the region coordinates, shifting
+        // it as close to the origin as possible. Do this on the user's region
+        // coordinates now, to avoid a perceived incongruity upon reset.
+        regionCoords = new Polyomino(regionCoords).normalize().coords;
+
         let problemData = {
             pieces: polyominos,
             region: regionCoords,
@@ -208,7 +217,9 @@
             ></polyomino-control>
         {/if}
 
-        <button class="button hollow size-button" class:disabled={ workComplete } disabled={ workComplete } 
+        <button class="button hollow size-button" 
+            class:disabled={ workComplete || !canDecrementRegionSize }
+            disabled={ workComplete || !canDecrementRegionSize } 
             title="grid size down" on:click={e => regionCreateSize = Math.max(2, regionCreateSize - 1) }
         >⇲</button>
         <button class="button hollow size-button" class:disabled={ workComplete } disabled={ workComplete }
