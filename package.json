@@ -1,6 +1,6 @@
 {
   "name": "polyomino-solver",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Solve arbitrary polyomino fitting problems",
   "author": "Chase Meadors",
   "scripts": {
