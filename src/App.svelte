@@ -81,12 +81,9 @@
             currentProblem.time = time;
 
             if (event.data.solution != null) {
-                // Data for polyomino-control in 'display-multiple' mode; display 
-                // problem region first in white in case of an inexact solution.
-                currentProblem.solutionCoords = [
-                    currentProblem.problemData.region,
-                    ...solution.map(x => x.coords)
-                ];
+                // Data for polyomino-control in 'display-multiple' mode; the
+                // first coords represent the problem region, drawn in white.
+                currentProblem.solutionCoords = solution.map(x => x.coords);
             }
             return workerBusy = false;
         }

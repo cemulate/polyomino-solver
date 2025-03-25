@@ -45,7 +45,7 @@ self.onmessage = function(event) {
 
         let { numVars, clauseList } = convertedProblem;
         let satSolution = solveSat(numVars, clauseList);
-        let solution = satSolution == false ? null : interpreter(satSolution);
+        let solution = satSolution == false ? null : [ polyProblem.region, ...interpreter(satSolution) ];
 
         self.postMessage({ 
             solution,
@@ -68,7 +68,7 @@ self.onmessage = function(event) {
         } else {
             let model = self.z3SolverOutputLines.slice(1).join(' ');
             let parsed = parseSexp(model);
-            let solution = interpreter(parsed);
+            let solution = [ polyProblem.region, ...interpreter(parsed) ];
 
             self.postMessage({ solution, time: performance.now() - startTime });
 
@@ -87,7 +87,7 @@ self.onmessage = function(event) {
             self.postMessage({ solution: null, time: performance.now() - startTime });
         } else {
             let rows = solutions[0].map(i => matrix[i]);
-            let solution = interpreter(rows);
+            let solution = [ polyProblem.region, ...interpreter(rows) ];
             self.postMessage({ solution, time: performance.now() - startTime });
         }
 
