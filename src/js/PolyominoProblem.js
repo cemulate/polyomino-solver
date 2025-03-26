@@ -245,9 +245,24 @@ export default class PolyominoProblem {
     convertToDlx() {
         let matrix = [];
 
-        let rowSize = this.pieces.length + this.region.coords.length;
+        const totalPieceCoords = this.pieces.reduce((sum, p) => sum + p.coords.length, 0);
+        const totalRegionCoords = this.region.coords.length;
+        const numPlaceholders = Math.max(totalRegionCoords - totalPieceCoords, 0);
 
-        this.pieces.forEach((piece, pieceIndex) => {
+        // Add single-block placeholder pieces so that the total count of blocks 
+        // adds up to that of the destination region, so we can make this an *exact* problem
+        let paddedPieces = [ ...this.pieces, ...(new Array(numPlaceholders).fill(new Polyomino([ [0, 0] ]))) ];
+
+        // Columns are indexed by pieces followed by region coordinates:
+        // p_1 p_2 p_3 ... p_n | (x0, y0) (x1, y1) (x2, y2) ... (xk, yk)
+
+        // Each row will assert that piece p_i may exist at certain coordinates in the region, which
+        // is indicated by placing a 1 at column p_i and 1's at the columns of the coordinates it occupies.
+        // A solution is then a subset of rows so that 1 appears exactly once in each column.
+
+        let rowSize = paddedPieces.length + this.region.coords.length;
+
+        paddedPieces.forEach((piece, pieceIndex) => {
             let configs = Array.from(this._generateAllPossibleConfigurations(piece));
             for (let config of configs) {
                 let row = new Array(rowSize).fill(0);
@@ -256,7 +271,7 @@ export default class PolyominoProblem {
 
                 for (let c of config.coords) {
                     let index = this.region.coords.findIndex(x => c[0] == x[0] && c[1] == x[1]);
-                    row[this.pieces.length + index] = 1;
+                    row[paddedPieces.length + index] = 1;
                 }
 
                 matrix.push(row);
@@ -270,10 +285,16 @@ export default class PolyominoProblem {
         }
 
         let interpreter = solution => {
-            return solution.map(row => {
-                let ones = findOneIndices(row.slice(this.pieces.length));
-                return new Polyomino(ones.map(i => this.region.coords[i]));
-            });
+            let pieces = [];
+            for (let row of solution) {
+                const pieceIndex = row.indexOf(1);
+                const coordIndices = findOneIndices(row.slice(paddedPieces.length));
+                if (pieceIndex < this.pieces.length) {
+                    // Only account for the user's pieces, not the placeholder blocks.
+                    pieces.push(new Polyomino(coordIndices.map(i => this.region.coords[i])));
+                }
+            }
+            return pieces;
         }
 
         return { convertedProblem: { matrix }, interpreter };
