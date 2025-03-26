@@ -13,11 +13,13 @@ Uses [web-component-polyomino](https://github.com/cemulate/web-component-polyomi
 Knuth's "Algorithm X" (implemented with "Dancing Links") is the best algorithm to handle this problem, by reducing it to an [Exact Cover Problem](https://en.wikipedia.org/wiki/Exact_cover).
 The details are explained by Knuth himself in [his paper](https://arxiv.org/abs/cs/0011047).
 I use [dlxlib](https://github.com/taylorjg/dlxlibjs/blob/master/src/dlx.js) as an implementation of Dancing Links, courtesy of [taylorgj](https://github.com/taylorjg).
+Though the name suggests otherwise, this method can find inexact solutions as well, by adding single-block placeholder pieces to the exact cover problem.
 
+### Legacy methods
 
-### Converstion to SAT
+The other two solving methods are much less efficient, and were the solutions I first implemented a long time ago.
 
-The other two solving methods are much less efficient, and were the solutions I first discovered.
+#### Converstion to SAT
 
 It's known that for arbitrary grids and arbitrary sets of [polyominos](https://en.wikipedia.org/wiki/Polyomino), the problem of deciding whether or not the polyominos can fit together on the grid is an [NP-Complete](https://en.wikipedia.org/wiki/NP-completeness) problem. Being NP-Complete, we can convert a tiling problem into an instance of a [Boolean Satisfiability Problem](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem), for which efficient solvers exist.
 
@@ -34,6 +36,5 @@ Since the SAT problem must be specified in CNF, even the input file can get very
 #### Z3 Webassembly
 
 This was born out of an attempt to make the preceding method faster.
-Here, we convert the problem to [SMT](http://smtlib.cs.uiowa.edu/)
- format, and use the [Webassembly build](https://github.com/cpitclaudel/z3.wasm) of Microsoft Research's [Z3 Theorem Prover](https://github.com/Z3Prover/z3).
- Generally speaking, this is a tool that can check the satisfiability of first-order logic statements over arbitrary theories, but we only utilize it for the predicate logic subset.
+Here, we convert the problem to [SMT](http://smtlib.cs.uiowa.edu/) format, and use the [Webassembly build](https://github.com/cpitclaudel/z3.wasm) of Microsoft Research's [Z3 Theorem Prover](https://github.com/Z3Prover/z3).
+Generally speaking, this is a tool that can check the satisfiability of first-order logic statements over arbitrary theories, but we only utilize it for the predicate logic subset.
