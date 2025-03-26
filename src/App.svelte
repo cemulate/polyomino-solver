@@ -243,28 +243,30 @@
 			<input type="radio" value="method-dlx" bind:group={ settings.method }> 
             Algorithm X (Dancing Links)
 			<p><small>
-				Reduces to an <a target="_blank" href="https://en.wikipedia.org/wiki/Exact_cover">exact cover problem</a>.
-				Only finds <strong>exact</strong> solutions, but usually gives the best performance when an exact solution exists.
+				Reduces to an <a target="_blank" href="https://en.wikipedia.org/wiki/Exact_cover">exact cover problem</a> (but will find inexact solutions as well).
 			</small></p>
 		</div>
-		<div>
-            <input type="radio" value="method-sat" bind:group={ settings.method }> 
-            SAT (JavaScript)
-			<p><small>
-				Reduces to <a target="_blank" href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">SAT</a>.
-				Will find <strong>partial (inexact)</strong> solutions, and is <strong>nondeterministic</strong>.
-				Uses a <a target="_blank" href="https://www.npmjs.com/package/boolean-sat">JavaScript SAT solver</a>, and usually gives the best performance for small or easy problems.
-			</small></p>
-		</div>
-		<div>
-            <input type="radio" value="method-z3" bind:group={ settings.method }> 
-			SAT (Z3)
-			<p><small>
-				Reduces to <a target="_blank" href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">SAT</a>.
-				Will find <strong>partial (inexact)</strong> solutions, and is <strong>deterministic</strong>.
-				Solves SAT via a Webassembly build of the <a href="https://github.com/Z3Prover/z3">Z3 Theorem Prover</a>, and gives <em>better</em> performance for larger problems.
-			</small></p>
-		</div>
+        <details>
+            <summary>Legacy algorithms</summary>
+            <div style="padding-top: 0.6em">
+                <input type="radio" value="method-sat" bind:group={ settings.method }> 
+                SAT (JavaScript)
+                <p><small>
+                    Reduces to <a target="_blank" href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">SAT</a>.
+                    Will find <strong>partial (inexact)</strong> solutions, and is <strong>nondeterministic</strong>.
+                    Uses a <a target="_blank" href="https://www.npmjs.com/package/boolean-sat">JavaScript SAT solver</a>, and usually gives the best performance for small or easy problems.
+                </small></p>
+            </div>
+            <div>
+                <input type="radio" value="method-z3" bind:group={ settings.method }> 
+                SAT (Z3)
+                <p><small>
+                    Reduces to <a target="_blank" href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">SAT</a>.
+                    Will find <strong>partial (inexact)</strong> solutions, and is <strong>deterministic</strong>.
+                    Solves SAT via a Webassembly build of the <a href="https://github.com/Z3Prover/z3">Z3 Theorem Prover</a>, and gives <em>better</em> performance for larger problems.
+                </small></p>
+            </div>
+        </details>
 		<hr>
 		<button
             class="button expanded"
