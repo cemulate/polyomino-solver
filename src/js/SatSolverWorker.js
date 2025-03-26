@@ -37,6 +37,13 @@ self.onmessage = function(event) {
         problem.allowReflection
     );
 
+    const totalPieceCoords = polyProblem.pieces.reduce((sum, p) => sum + p.coords.length, 0);
+    const totalRegionCoords = polyProblem.region.coords.length;
+    if (totalPieceCoords > totalRegionCoords) {
+        // Trivially non-solvable
+        return self.postMessage({ solution: null, time: 0 });
+    }
+
     let startTime = performance.now();
 
     if (type == 'sat') {
