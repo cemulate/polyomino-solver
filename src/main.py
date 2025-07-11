@@ -93,7 +93,7 @@ t0 = time.time()
   # print(f"Recipe {k + 1} / {len(all_recipes)}")
   # print([p.baseName for p in recipe])
 
-problem = puzzles['37']
+problem = puzzles['17']
 print_polyomino(problem.region)
 print(problem.region.clues)
 print(problem.pieces)

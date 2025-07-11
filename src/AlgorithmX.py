@@ -175,7 +175,7 @@ def reduceMatrix(matrix, kc):
   
   # Indices will be 1 if both rows have a 1 on the same index;
   # 0 if one of them had a 0,
-  # 0.25 if one of them was 1 and the other was 0.25,
+  # 0.5 if one of them was 1 and the other was 0.5,
   # and a lower value otherwise.
   prodMatrix = np.multiply(matrixNh, mulMatrix)
 
@@ -185,9 +185,9 @@ def reduceMatrix(matrix, kc):
   # Find the highest value in each row
   highestProdPerRow = np.max(prodMatrix, axis=1)
 
-  #We'll remove any row that has a value geq 0.25 (adding back the header row)
-  # reducedMatrix = np.append(np.reshape(matrixH, (1, matrixH.shape[0])), matrixNh[np.where(highestProdPerRow < 0.25)], axis = 0)
-  reducedMatrix = np.append(matrixH, matrixNh[np.where(highestProdPerRow < 0.125)], axis = 0)
+  #We'll remove any row that has a value geq 0.5 (adding back the header row)
+  # reducedMatrix = np.append(np.reshape(matrixH, (1, matrixH.shape[0])), matrixNh[np.where(highestProdPerRow < 0.5)], axis = 0)
+  reducedMatrix = np.append(matrixH, matrixNh[np.where(highestProdPerRow < 0.25)], axis = 0)
 
   # print("Reduced matrix:")
   # print(reducedMatrix)

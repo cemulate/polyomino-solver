@@ -227,7 +227,7 @@ class PolyominoProblem:
             # time.sleep(5)
 
             #TODO MAYBE overlap = 1 if ...
-            overlap = .125 if c2 in tot_overlap else (.125 if c2 in part_overlap else 0)
+            overlap = .25 if c2 in tot_overlap else (.25 if c2 in part_overlap else 0)
 
             self.overlapMatrix[ic1, ic2] = overlap
             # self.overlapMatrix[ic2, ic1] = overlap
@@ -348,9 +348,9 @@ class PolyominoProblem:
           # print(self.overlapMatrix[r.col:r.col + len(r.coords), :])
           # print("Specifically")
           # print(self.overlapMatrix[r.col:r.col + len(r.coords),tileIndex])
-          # print(np.where(self.overlapMatrix[r.col:r.col + len(r.coords),tileIndex] == 0.125)[0])
+          # print(np.where(self.overlapMatrix[r.col:r.col + len(r.coords),tileIndex] == 0.25)[0])
           # time.sleep(10)
-          virtual_overlaps = np.where(self.overlapMatrix[r.col:r.col + len(r.coords),tileIndex] == 0.125)[0]
+          virtual_overlaps = np.where(self.overlapMatrix[r.col:r.col + len(r.coords),tileIndex] == 0.25)[0]
           # print(virtual_overlaps)
           if len(virtual_overlaps) > 0:
             overlapping, _ = self._getOverlappingCoords(c, self.region, r) #Including cells not in the virtual grid, so different from virtual_overlaps.
@@ -362,7 +362,7 @@ class PolyominoProblem:
         headerRow1[tileIndex + len(recipe)] = 1
 
         for k, r in enumerate(self.regions[1:]): #Increment essentiality of overlapping tiles in virtual regions (Jessie what the fuck are you talking about?)
-          virtual_overlaps = np.where(self.overlapMatrix[r.col:r.col + len(r.coords),tileIndex] == 0.125)[0]
+          virtual_overlaps = np.where(self.overlapMatrix[r.col:r.col + len(r.coords),tileIndex] == 0.25)[0]
           # print(virtual_overlaps)
           if len(virtual_overlaps) > 0:
             overlapping, _ = self._getOverlappingCoords(c[0], self.region, r)
@@ -397,7 +397,7 @@ class PolyominoProblem:
 
           clued = False
           #A config will be discarded if it's adjacent to a letter-clue, or if it overlaps a clue of the wrong letter.
-          #If the config overlaps a correct clue, its adjacent tiles will be set to 0.25 in its matrix row.
+          #If the config overlaps a correct clue, its adjacent tiles will be set to 0.5 in its matrix row.
           if len(config.region.clues) > 0:
             adjacent = config.getAdjacentCoords()
 
@@ -438,7 +438,7 @@ class PolyominoProblem:
           #   elif x == 1:
           #     return 1.
           #   else:
-          #     return .25
+          #     return .5
           
           # vfunc = np.vectorize(remap)
           # row = vfunc(row)
@@ -455,7 +455,7 @@ class PolyominoProblem:
             if v != 0 and row[kk + len(self.pieces)] != 1:
               # if len(config.coords) > 3:
               #     print("cock")
-              row_mult[kk] = .25
+              row_mult[kk] = .5
 
           row = row[:len(self.pieces)] + row_mult
           row[k] = regionIdx + 1 #Piece index
@@ -473,7 +473,7 @@ class PolyominoProblem:
                 tileIndex = config.region.coords.index(a)
                 regionIdx = self.regions.index(config.region)
                 offset = len(self.pieces) + sum([len(r.coords) for r in self.regions[:regionIdx]])
-                row[tileIndex + offset] = 0.125
+                row[tileIndex + offset] = 0.25
           
           self.matrix.append(row)
       
