@@ -93,7 +93,7 @@ t0 = time.time()
   # print(f"Recipe {k + 1} / {len(all_recipes)}")
   # print([p.baseName for p in recipe])
 
-problem = puzzles['20']
+problem = puzzles['37']
 print_polyomino(problem.region)
 print(problem.region.clues)
 print(problem.pieces)
@@ -108,7 +108,7 @@ convertedProblem = problem.convertToDlx()
 
 t2 = time.time()
 
-solutions = solveProblems(convertedProblem['problems'], return_all_solutions=False, is_auto = is_auto)
+solutions = solveProblems(convertedProblem['problems'], return_all_solutions=True, is_auto = is_auto)
 print("SOLUTIONS")
 
 # print(solutions)

@@ -240,6 +240,19 @@ puzzles = {
     ),
   ),
 
+  '37': PolyominoProblem(
+    abdec('ace'),
+    Polyomino.fromString(
+      '''
+      OO..Oc
+      OOO*OO
+      O*OOO*
+      OOO*OO
+      OO..OO
+      '''
+    ),
+  ),
+
   '39': PolyominoProblem(
     abdec('b'),
     Polyomino.fromString(

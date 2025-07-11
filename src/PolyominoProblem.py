@@ -241,7 +241,7 @@ class PolyominoProblem:
     recipes = []
     regionArea = len(self.region.coords)
 
-    for mult in range(1, 2): #TODO 4
+    for mult in range(1, 4): #TODO 4
       othersArea = sum(len(p.coords) for p in pieces[1:]) + sum(len(p.coords) for p in recipePieces)
       myArea = len(pieces[0].coords)
       if othersArea + myArea * mult * mult > regionArea:
